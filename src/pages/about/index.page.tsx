@@ -1,3 +1,5 @@
+import { DocumentProps } from "#/renderer/types.ts";
+
 export const Page = () => {
   return (
     <div>
@@ -6,7 +8,7 @@ export const Page = () => {
   );
 };
 
-export const documentProps = {
+export const documentProps: DocumentProps = {
   // This title and description will override the defaults
   title: "About",
 };

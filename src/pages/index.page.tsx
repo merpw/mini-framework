@@ -1,4 +1,5 @@
-import Link from "../renderer/Link.tsx";
+import Link from "#/renderer/Link.tsx";
+import { DocumentProps } from "#/renderer/types.ts";
 
 export const Page = () => {
   return (
@@ -7,4 +8,8 @@ export const Page = () => {
       <Link href={"/about"}>About</Link>
     </div>
   );
+};
+
+export const documentProps: DocumentProps = {
+  title: "Home",
 };

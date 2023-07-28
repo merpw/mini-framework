@@ -7,15 +7,17 @@ import type {
 type Page = (pageProps: PageProps) => ReactElement;
 export type PageProps = Record<string, unknown>;
 
+export type DocumentProps = {
+  title?: string;
+  description?: string;
+};
+
 export type PageContextCustom = {
   Page: Page;
   pageProps?: PageProps;
   urlPathname: string;
   exports: {
-    documentProps?: {
-      title?: string;
-      description?: string;
-    };
+    documentProps?: DocumentProps;
   };
 };
 

@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import type { PageContextClient } from "./types";
 
-import "../globals.css";
+import "#/globals.css";
 import { PageContext } from "./usePageContext.ts";
 
 export const clientRouting = true;
