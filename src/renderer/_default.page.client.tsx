@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { Fragment, StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import type { PageContextClient } from "./types";
 
@@ -12,14 +12,20 @@ let root: ReactDOM.Root;
 
 export async function render(pageContext: PageContextClient) {
   const { Page, pageProps } = pageContext;
+
+  const Layout = pageContext.exports.Layout || Fragment;
+
   const page = (
     <StrictMode>
       <PageContext.Provider value={pageContext}>
-        <Page {...pageProps} />
+        <Layout>
+          <Page {...pageProps} />
+        </Layout>
       </PageContext.Provider>
     </StrictMode>
   );
   const container = document.getElementById("root")!;
+
   if (pageContext.isHydration) {
     root = ReactDOM.hydrateRoot(container, page);
   } else {
@@ -29,5 +35,5 @@ export async function render(pageContext: PageContextClient) {
     root.render(page);
   }
 
-  document.title = pageContext.exports.documentProps?.title ?? "Create Bra App";
+  document.title = pageContext.exports.documentProps?.title || "";
 }

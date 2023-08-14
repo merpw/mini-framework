@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 import type {
   PageContextBuiltIn,
   PageContextBuiltInClientWithServerRouting as PageContextBuiltInClient,
@@ -18,6 +18,7 @@ export type PageContextCustom = {
   urlPathname: string;
   exports: {
     documentProps?: DocumentProps;
+    Layout?: FC<{ children: ReactElement }>;
   };
 };
 

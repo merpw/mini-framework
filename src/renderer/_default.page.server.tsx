@@ -1,13 +1,14 @@
-import PageShell from "./PageShell";
 import ReactDOMServer from "react-dom/server";
 import { dangerouslySkipEscape, escapeInject } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
 
 import "#/globals.css";
+import { PageContext } from "#/renderer/usePageContext.ts";
+import { Fragment, StrictMode } from "react";
 
 const defaultDocumentProps = {
-  title: "Create Bra App",
-  description: "Create Bra App",
+  title: "",
+  description: "",
 };
 
 // See https://vite-plugin-ssr.com/data-fetching
@@ -15,16 +16,20 @@ export const passToClient = ["pageProps"];
 
 export async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
-  // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
-  if (!Page)
-    throw new Error(
-      "server render() hook expects pageContext.Page to be defined"
-    );
-  const pageHtml = ReactDOMServer.renderToString(
-    <PageShell pageContext={pageContext}>
-      <Page {...pageProps} />
-    </PageShell>
+
+  const Layout = pageContext.exports.Layout || Fragment;
+
+  const page = (
+    <StrictMode>
+      <PageContext.Provider value={pageContext}>
+        <Layout>
+          <Page {...pageProps} />
+        </Layout>
+      </PageContext.Provider>
+    </StrictMode>
   );
+
+  const pageHtml = ReactDOMServer.renderToString(page);
 
   // See https://vite-plugin-ssr.com/head
   const documentProps = {
