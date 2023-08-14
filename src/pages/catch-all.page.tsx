@@ -19,8 +19,9 @@ export const documentProps: DocumentProps = {
 const selectActiveTabTodos = createSelector(
   (state: RootState) => state.todos,
   (_: RootState, activeTab: Tab) => activeTab,
-  (todos, activeTab) => {
-    return todos.filter(activeTab.filter);
+  (state: RootState) => state.persist.hydrated,
+  (todos, activeTab, isHydrated) => {
+    return isHydrated ? todos.filter(activeTab.filter) : null;
   }
 );
 
