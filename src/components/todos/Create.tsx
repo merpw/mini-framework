@@ -55,26 +55,23 @@ const Create: FC = () => {
   const setRandomPlaceholder = () => {
     setPlaceholder(`e.g. ${randomPlaceholder()}`);
   };
-/*
-  const toggleAll = () => {
 
-  };
-*/
   useEffect(() => {
     setRandomPlaceholder();
   }, []);
 
   return (
-    <header className={"mt-5 mx-auto p-10 bg-base-300 rounded"}>
+    <header className={"header mt-5 mx-auto p-10 bg-base-300 rounded"}>
       <h1 className={"text-8xl mb-10 text-center"}>
         todos
       </h1>
+
+      <button onClick={() => dispatch(todoActions.toggleAll())}>Toggle all</button>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           const input = e.currentTarget[0] as HTMLInputElement;
           dispatch(todoActions.addTodo(input.value));
-          // toggleAll();
           input.value = "";
           setRandomPlaceholder();
         }}

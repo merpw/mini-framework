@@ -17,13 +17,10 @@ const Todo: FC<{ todo: Todo }> = ({ todo }) => {
   const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(todo.text);
+  const [isHovered, setIsHovered] = useState(false);
 
   const toggleTodo = () => {
     dispatch(todoActions.toggleTodo(todo.id));
-  };
-
-  const deleteTodo = () => {
-    dispatch(todoActions.deleteTodo(todo.id));
   };
 
   const handleDoubleClick = () => {
@@ -42,8 +39,22 @@ const Todo: FC<{ todo: Todo }> = ({ todo }) => {
     setEditedText(event.target.value);
   };
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const removeTodo = () => {
+    dispatch(todoActions.removeTodo(todo.id));
+  };
+
   return (
       <div
+          onMouseOver={handleMouseEnter}
+          onMouseOut={handleMouseLeave}
           className={
               "text-xl flex items-center gap-5 p-3 my-2 bg-base-300 rounded" +
               " " +
@@ -87,7 +98,13 @@ const Todo: FC<{ todo: Todo }> = ({ todo }) => {
               {todo.text}
             </p>
         )}
-        <button style={{ marginLeft: "auto" }} onClick={deleteTodo}>X</button>
+            <button
+                style={{marginLeft: "auto"}}
+                className={`destroy tab tab-lg ${isHovered ? "visible" : "invisible"}`}
+                onClick={removeTodo}
+            >
+              X
+            </button>
       </div>
   );
 };
