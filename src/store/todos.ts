@@ -27,7 +27,13 @@ const todosSlice = createSlice({
       }
     },
     deleteTodo: (state, action: PayloadAction<number>) => {
-      state = state.filter((todo) => todo.id !== action.payload);
+      return state.filter((todo) => todo.id !== action.payload);
+    },
+    editTodo: (state, action: PayloadAction<{ id: number, text: string }>) => {
+      const todo = state.find((todo) => todo.id === action.payload.id);
+      if (todo) {
+        todo.text = action.payload.text;
+      }
     },
   },
 });
