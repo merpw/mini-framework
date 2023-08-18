@@ -9,6 +9,11 @@ export type Tab = {
 
 export const Tabs: Tab[] = [
   {
+    name: "All",
+    href: "/",
+    filter: () => true,
+  },
+  {
     name: "Active",
     href: "/active",
     filter: (todo) => !todo.isCompleted,
@@ -17,11 +22,6 @@ export const Tabs: Tab[] = [
     name: "Completed",
     href: "/completed",
     filter: (todo) => todo.isCompleted,
-  },
-  {
-    name: "All",
-    href: "/",
-    filter: () => true,
   },
 ];
 
