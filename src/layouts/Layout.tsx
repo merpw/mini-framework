@@ -5,6 +5,8 @@ import PersistGate from "#/store/persist/PersistGate.tsx";
 import Create from "#/components/todos/Create.tsx";
 import { Tabs, useActiveTab } from "#/hooks/tabs.ts";
 import Link from "#/renderer/Link.tsx";
+import { todoActions } from "#/store/todos.ts";
+import {useAppDispatch, useAppSelector} from "#/store/hooks.ts";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
     return (
@@ -24,11 +26,29 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
 
 const SelectTab: FC = () => {
   const activeTab = useActiveTab();
+  const dispatch = useAppDispatch();
+
+  const incompleteCount = useAppSelector(state =>
+        state.todos.filter((todo) => !todo.isCompleted)
+  ).length;
+
+  const todoCount = useAppSelector(state =>
+      state.todos.length
+  );
+
+  const hasCompleted = useAppSelector(state =>
+      state.todos.find((todo) => todo.isCompleted) !== undefined
+  );
 
   return (
     <>
-      <div className="tabs flex justify-center w-full">
-          <p className={`tab tab-lg`}>items left</p>
+    {todoCount === 0 ? null :
+      <ul className="tabs flex justify-center w-full">
+          {incompleteCount > 1 ?
+              <span className={`tab tab-lg`}>
+                <strong>{incompleteCount}</strong>&nbsp; items left</span> :
+              <span className={`tab tab-lg`}>
+                <strong>{incompleteCount}</strong>&nbsp; item left</span>}
         {Tabs.map((tab) => (
           <Link
             key={tab.href}
@@ -40,8 +60,15 @@ const SelectTab: FC = () => {
             {tab.name}
           </Link>
         ))}
-          <button className={`clear-completed tab tab-lg`}>Clear completed</button>
-      </div>
+          {hasCompleted ? (
+              <button
+                  className={`self-end clear-completed tab tab-lg tab-bordered`}
+                  onClick={() => dispatch(todoActions.removeTodoCompleted())}
+              >
+                  Clear completed
+              </button>
+          ) : null}
+      </ul>}
     </>
   );
 };
