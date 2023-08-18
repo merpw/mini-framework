@@ -45,8 +45,8 @@ export async function render(pageContext: PageContextServer) {
         <meta name="description" content="${documentProps.description}" />
         <title>${documentProps.title}</title>
       </head>
-      <body>
-        <div id="root">${dangerouslySkipEscape(pageHtml)}</div>
+      <body class="learn-bar">
+        <section id="root" class="todoapp container mx-auto max-w-screen-md">${dangerouslySkipEscape(pageHtml)}</section>
       </body>
     </html>`;
 

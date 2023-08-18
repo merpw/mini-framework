@@ -61,10 +61,12 @@ const Create: FC = () => {
   }, []);
 
   return (
-    <div className={"mt-5 mx-auto p-10 bg-base-300 rounded"}>
-      <h1 className={"text-4xl font-bold mb-10 text-center"}>
-        Create a new todo
+    <header className={"header mt-5 mx-auto p-10 bg-base-300 rounded"}>
+      <h1 className={"text-8xl mb-10 text-center"}>
+        todos
       </h1>
+
+      <button onClick={() => dispatch(todoActions.toggleAll())}>Toggle all</button>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -74,9 +76,14 @@ const Create: FC = () => {
           setRandomPlaceholder();
         }}
       >
-        <input className={"input input-lg w-full"} placeholder={placeholder} />
+        <input
+            className={"new-todo input input-lg w-full"}
+            autoFocus={true}
+            autoComplete={"off"}
+            placeholder={placeholder}
+        />
       </form>
-    </div>
+    </header>
   );
 };
 
