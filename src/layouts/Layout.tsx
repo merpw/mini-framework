@@ -13,8 +13,8 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
                 <div className={"container mx-auto max-w-screen-md"}>
                     <Create />
                         <footer className={"bg-base-200 p-3"}>
-                            <SelectTab />
                             {children}
+                            <SelectTab />
                         </footer>
                 </div>
             </PersistGate>
@@ -40,6 +40,7 @@ const SelectTab: FC = () => {
             {tab.name}
           </Link>
         ))}
+          <button className={`clear-completed tab tab-lg`}>Clear completed</button>
       </div>
     </>
   );
