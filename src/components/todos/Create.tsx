@@ -76,7 +76,12 @@ const Create: FC = () => {
           setRandomPlaceholder();
         }}
       >
-        <input className={"input input-lg w-full"} placeholder={placeholder} />
+        <input
+            className={"new-todo input input-lg w-full"}
+            autoFocus={true}
+            autoComplete={"off"}
+            placeholder={placeholder}
+        />
       </form>
     </header>
   );

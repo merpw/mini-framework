@@ -4,12 +4,12 @@ import { useAppDispatch } from "#/store/hooks.ts";
 
 const TodoList: FC<{ todos: Todo[] }> = ({ todos }) => {
   return (
-    <div className={"mt-5"}>
+    <section className={"main mt-5"}>
       {todos.map((todo) => (
         <Todo key={todo.id} todo={todo} />
       ))}
 
-    </div>
+    </section>
   );
 };
 
@@ -88,15 +88,23 @@ const Todo: FC<{ todo: Todo }> = ({ todo }) => {
                 value={editedText}
                 onChange={handleTextChange}
                 onBlur={saveEditing}
+                onKeyDown={(e) => {
+                  if (e.key === "Tab" || e.key === "Enter" || e.key === "Escape") {
+                    e.preventDefault();
+                    saveEditing();
+                  }
+                }}
                 autoFocus
             />
         ) : (
-            <p
-                className={todo.isCompleted ? "line-through decoration-1" : ""}
+            <label
+                className={`max-w-[600px] ${
+                    todo.isCompleted ? "line-through decoration-1" : ""
+                } break-all`}
                 onDoubleClick={handleDoubleClick}
             >
               {todo.text}
-            </p>
+            </label>
         )}
             <button
                 style={{marginLeft: "auto"}}
