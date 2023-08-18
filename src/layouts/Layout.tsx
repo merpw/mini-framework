@@ -7,19 +7,19 @@ import { Tabs, useActiveTab } from "#/hooks/tabs.ts";
 import Link from "#/renderer/Link.tsx";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <Provider store={store}>
-      <PersistGate>
-        <div className={"container mx-auto max-w-screen-md"}>
-          <Create />
-          <div className={"bg-base-200 p-3"}>
-            <SelectTab />
-            {children}
-          </div>
-        </div>
-      </PersistGate>
-    </Provider>
-  );
+    return (
+        <Provider store={store}>
+            <PersistGate>
+                <div className={"container mx-auto max-w-screen-md"}>
+                    <Create />
+                        <footer className={"bg-base-200 p-3"}>
+                            <SelectTab />
+                            {children}
+                        </footer>
+                </div>
+            </PersistGate>
+        </Provider>
+    );
 };
 
 const SelectTab: FC = () => {
@@ -28,6 +28,7 @@ const SelectTab: FC = () => {
   return (
     <>
       <div className="tabs flex justify-center w-full">
+          <p className={`tab tab-lg`}>items left</p>
         {Tabs.map((tab) => (
           <Link
             key={tab.href}
