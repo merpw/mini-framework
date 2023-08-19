@@ -6,7 +6,7 @@
 
 ---
 
-Authors:  [@maximihajlov](https://github.com/maximihajlov),
+Authors: [@maximihajlov](https://github.com/maximihajlov),
 [@nattikim](https://github.com/nattikim),
 [@bomanviktor](https://github.com/bomanviktor),
 [@teetorandre](https://github.com/FinnTune)
@@ -19,232 +19,182 @@ Powered by:
 - [Vite](https://vitejs.dev/) as a build tool and bundler
 - [Vite plugin SSR](https://vite-plugin-ssr.com/) for server-side rendering and filesystem-based routing
 
-[//]: # "TODO: add docs"
-
 ## Documentation:
 
 - [Introduction](#introduction)
-- [To Run](#to-run)
-- [Project structure](#project-structure)
+- [Example project: todoMVC](#example-project-todomvc)
+- [How does the framework work?](#how-does-the-framework-work)
+- [Components](#components)
 - [Routing](#routing)
-- [State Management](#state-management)
-- [Abstracting the DOM and Events](#abstracting-the-dom-and-events)
 - [Deployment](#deployment)
 
-
 ### Introduction:
-The Mini-Framework is a lightweight framework built using React, Redux, and Vite. It simplifies the process of creating web applications by abstracting common tasks such as DOM manipulation, state management, routing, and event handling.
 
+The Mini-Framework is a lightweight framework powered by React and Vite.
 
-### To Run:
+It is inspired by Next.js and provides all the
+necessary tools to build a modern web application with server-side rendering.
+
+It simplifies the process of creating web applications by abstracting common tasks such as DOM manipulation, state
+management, routing, and event handling.
+
+### Example project: todoMVC
+
+### [Live demo](https://todo.mer.pw/)
+
+A simple todoMVC application built with the framework which demonstrates the main features of the framework.
+
+#### To run:
+
 ```bash
 npm install
 npm run build
 vite preview
 ```
 
-`npm install`: command used in Node.js environments with the Node Package Manager (npm) to install dependencies specified in a package.json file\
+`npm install` - installs project dependencies
 
-`npm run build`: run the build script that is defined in the scripts section of the package.json file of a Node.js project. This script typically contains commands to compile, bundle, or transform source code into a production-ready format.
+`npm run build`- builds the project into the `dist` directory
 
-`vite preview`: starts a local server that serves the built project from the dist directory. The server will watch source files and reload the browser on changes.
+`npm run preview`- starts a local server
 
+`npm run dev`- starts a fast-refresh [SWC](https://swc.rs)-powered development server
 
-### Project Structure:
+### How does the framework work?
+
+The framework consists of two main parts:
 
 ```
 src/
-├── components/
-│   └── todos/
-│       └──Create.tsx
-│       └──Filters.tsx
-│       └──ToDoList.tsx
-├── hooks/
-│   └──tabs.ts
-├── layouts/
-│   └──Layout.tsx
 ├── pages/
-│   └──catch-all.page.route.ts
-│   └──catch-all.page.server.tsx
-    └──catch-all.page.tsx
+|   └── index.page.tsx
 ├── renderer/
 │   └──_default.page.client.tsx
 │   └──_default.page.server.tsx
 │   └──_error.page.tsx
-│   └──Links.tsx
+│   └──Link.tsx
 │   └──types.ts
 │   └──usePageContext.ts
-└── store/
-    └──globals.css
-    └──vite-env.d.ts
 ```
 
-### Routing:
+- `/pages` - filesystem-based [router](#routing), place to define your pages
 
-The Link component and Tabs usage suggest a custom routing mechanism. This mechanism likely synchronizes the application's state with the URL, allowing users to navigate between different views.
+- `/renderer` - framework's core functionality, including all the necessary components and hooks for server-side
+  rendering
 
-#### Usage:
+  - `_default.page.client.tsx` - default client-side page component, your page will be wrapped with this component
+    automatically on the client-side
+  - `_default.page.server.tsx` - default server-side page component, This wraps the whole application in `<html>` and
+    `<body>` tags and provides the necessary context for server-side rendering
+  - `_error.page.tsx` - error page component will be rendered when an error occurs (on both client and server)
+  - `Link.tsx` - [`<Link />` component](#link-component) for client-side navigation
+  - `types.ts` - framework's TypeScript types
+  - `usePageContext.ts` - hook to access the page context (e.g. `usePageContext().url`)
 
-```tsx
- <Link
-    key={tab.href}
-    href={tab.href}
-    className={`tab tab-lg tab-bordered ${
-        tab === activeTab ? "tab-active" : ""
-    }`}
->
-    {tab.name}
-</Link>
-```
+When building the project, the framework will automatically generate a client-side bundle for each page and a
+server-side bundle for the whole application.
+The pre-rendering is enabled by default, so for each page, the framework will generate a static HTML file.
 
-For this demo we use tabs in order to allow users to switch between different views or sub-pages. The Tabs component provides an array of tab objects, each having a name (the visible label) and a href (the link to the corresponding view).
+### Components
 
-```tsx
-const Tabs: Tab[] = [
-    { name: "All", href: "/" },
-    { name: "Active", href: "/active" },
-    { name: "Completed", href: "/completed" },
-];
-```
-
-### State Management:
-
-Redux, in combination with React's context API, manages the application's state. The Provider component wraps the entire app, ensuring that the Redux store is accessible throughout the application.
-
-Example:
-
-Here's the store's initial state and the reducers that handle the state changes can be used anywhere in the application to update the state, in this case, the todo list.
+The framework is powered by React virtual DOM and provides the industry-standard way of building UI components:
 
 ```tsx
-export type Todo = {
-    id: number;
-    text: string;
-    isCompleted: boolean;
-};
+const Component = () => {
+  const [state, setState] = useState(0);
 
-const initialState: Todo[] = [];
-
-const todosSlice = createSlice({
-    name: "todos",
-    initialState,
-    reducers: {
-        toggleAll: (state) => {
-            const allCompleted = state.find((todo) => !todo.isCompleted)
-            state.forEach((todo) => {
-                todo.isCompleted = allCompleted !== undefined
-            })
-
-        },
-        addTodo: (state, action: PayloadAction<string>) => {
-            const newTodo: Todo = {
-                id: Date.now(),
-                text: action.payload,
-                isCompleted: false,
-            };
-            state.push(newTodo);
-        },
-        toggleTodo: (state, action: PayloadAction<number>) => {
-            const todo = state.find((todo) => todo.id === action.payload);
-            if (todo) {
-                todo.isCompleted = !todo.isCompleted;
-            }
-        },
-        editTodo: (state, action: PayloadAction<{ id: number, text: string }>) => {
-            const todo = state.find((todo) => todo.id === action.payload.id);
-            if (todo) {
-                todo.text = action.payload.text;
-            }
-        },
-        removeTodo: (state, action: PayloadAction<number>) => {
-            return state.filter((todo) => todo.id !== action.payload);
-        },
-        removeTodoCompleted: (state) => {
-            return state.filter((todo) => !todo.isCompleted);
-        },
-    },
-});
-```
-
-### Abstracting the DOM and Events:
-
-The framework utilizes React's virtual DOM to handle UI updates efficiently. The virtual DOM allows the framework to make minimal updates to the actual DOM by comparing the current and previous states.
-The framework uses React's built-in event handling mechanism. This provides a consistent and efficient way to manage user interactions, such as clicks, input changes, and form submissions.
-
-Example of layout abstraction and nested components:
-```tsx
-const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-    return (
-        <Provider store={store}>
-            <PersistGate>
-                    <Create />
-                    {children}
-                    <TodoFooter />
-            </PersistGate>
-        </Provider>
-    );
+  return (
+    <button
+      onClick={() => setState((prev) => prev + 1)}
+      style={{ color: state % 2 === 0 ? "red" : "blue" }}
+    >
+      Hello <strong>World!</strong>
+    </button>
+  );
 };
 ```
 
-`TodoFooter` component inside the `Layout` component:
+To create an element, we use the JSX syntax, which will be compiled to the virtual DOM.
+We can define the element's attributes and styles using the standard HTML syntax.
+We can nest elements inside each other, and we can use any valid JavaScript expression inside the curly braces.
 
-```tsx
-const TodoFooter: FC = () => {
-    const todoCount = useAppSelector(state =>
-        state.todos.length
-    );
-    return(
-        <>
-        {todoCount === 0 ? null :
-            <footer className={"bg-base-200 p-3 grid grid-cols-3 place-items-center"}>
-                <TodoCount />
-                <SelectTab />
-                <ClearCompleted />
-            </footer>}
-        </>
-    )
-}
+State management is done using React built-in hooks like `useState` and `useEffect`.
+We can call event handlers using the `onEvent` like `onClick` or `onChange`.
+Check out the [React documentation](https://react.dev/learn) for more details.
+
+The example above will be compiled to something like this (simplified):
+
+```html
+<button style="color: red">Hello <strong>World!</strong></button>
+
+<script>
+  const count = 0;
+  button.addEventListener("click", () => {
+    button.style.color = count % 2 === 0 ? "red" : "blue";
+    render(); // simplified, this will re-render the component
+  });
+</script>
 ```
 
-Here's one single `ClearCompleted` component with added attributes, and event handling.
+As the framework is powered by React, we can use any component libraries and tools from the React ecosystem,
+like [Redux](https://redux.js.org/), [React hook form](https://react-hook-form.com/) or [Material UI](https://mui.com/).
+
+### Routing
+
+Like in Next.js, the framework uses filesystem-based routing.
+This means that each route is a file or a set of files in the `pages` directory.
+The routing engine is based on the [Vite plugin SSR](https://vite-plugin-ssr.com/).
+
+For example, to define an index page, we should create a file called `index.page.tsx` in the `pages` directory and
+export a component named `Page` from it:
 
 ```tsx
-const ClearCompleted: FC = () => {
-    const dispatch = useAppDispatch();
-    const hasCompleted = useAppSelector(state =>
-        state.todos.find((todo) => todo.isCompleted) !== undefined
-    );
-    return (
-        <>
-            {hasCompleted ? (
-                <button
-                    className={`clear-completed tab tab-lg tab-bordered justify-self-end`}
-                    onClick={() => dispatch(todoActions.removeTodoCompleted())}
-                >
-                    Clear completed
-                </button>
-            ) : null}
-        </>
-    )
-}
+// pages/index.page.tsx
+export const Page = () => {
+  return <h1>Hello World!</h1>;
+};
 ```
 
+The framework will automatically generate a route for this page, and the page will be accessible at `/`.
+
+#### Link component
+
+By default, when using `<a href="/some-page">`, the browser will make a full page reload.
+It's named multiple-page approach, and sometimes it can be annoying, as it creates many unnecessary requests to the
+server and makes the page load less smooth.
+
+For this reason, the framework supports a single-page approach, which updates only the necessary parts of the page.
+To do so we should use `<Link />` component instead of `<a />`:
+
+```tsx
+import Link from "#/renderer/Link";
+
+export const Page = () => {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/some-page">Some page</Link>
+    </nav>
+  );
+};
+```
+
+This will smoothly navigate to the corresponding page without reloading the page.
 
 ### Deployment:
-You have to create your own `index.html` & `globals.css` files for this framework, and declare a div element with `id = root`:
+
+After creating all the necessary components, we can build the project using `npm run build` command.
+This will generate a production-ready bundle in the `dist`, which contains two folders:
+
 ```
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My DOM</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+dist/
+├── client/
+├── server/
 ```
 
+By default, a pre-rendering is enabled, so the `client` folder contain all the defined pages and can be deployed to any
+static hosting like GitHub Pages or Cloudflare Pages.
 
+For more complex logic that requires runtime server-side rendering, we need a Node.js server.
 
-
+To run the server, we can use the `npm run preview` command.
