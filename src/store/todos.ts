@@ -13,11 +13,10 @@ const todosSlice = createSlice({
   initialState,
   reducers: {
     toggleAll: (state) => {
-      const allCompleted = state.find((todo) => !todo.isCompleted)
+      const allCompleted = state.find((todo) => !todo.isCompleted);
       state.forEach((todo) => {
-        todo.isCompleted = allCompleted !== undefined
-      })
-
+        todo.isCompleted = allCompleted !== undefined;
+      });
     },
     addTodo: (state, action: PayloadAction<string>) => {
       const newTodo: Todo = {
@@ -33,7 +32,7 @@ const todosSlice = createSlice({
         todo.isCompleted = !todo.isCompleted;
       }
     },
-    editTodo: (state, action: PayloadAction<{ id: number, text: string }>) => {
+    editTodo: (state, action: PayloadAction<{ id: number; text: string }>) => {
       const todo = state.find((todo) => todo.id === action.payload.id);
       if (todo) {
         todo.text = action.payload.text;
@@ -42,7 +41,7 @@ const todosSlice = createSlice({
     removeTodo: (state, action: PayloadAction<number>) => {
       return state.filter((todo) => todo.id !== action.payload);
     },
-    removeTodoCompleted: (state) => {
+    clearCompleted: (state) => {
       return state.filter((todo) => !todo.isCompleted);
     },
   },

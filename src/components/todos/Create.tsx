@@ -61,28 +61,47 @@ const Create: FC = () => {
   }, []);
 
   return (
-    <header className={"header mt-5 mx-auto p-10 bg-base-300 rounded"}>
-      <h1 className={"text-8xl mb-10 text-center"}>
-        todos
-      </h1>
-
-      <button onClick={() => dispatch(todoActions.toggleAll())}>Toggle all</button>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const input = e.currentTarget[0] as HTMLInputElement;
-          dispatch(todoActions.addTodo(input.value));
-          input.value = "";
-          setRandomPlaceholder();
-        }}
-      >
-        <input
+    <header className={"header mt-5 mx-auto py-10 bg-base-300 rounded"}>
+      <h1 className={"text-8xl mb-10 text-center"}>todos</h1>
+      <div className={"flex mr-10 ml-3"}>
+        <label
+          className={"toggle-all flex items-center mr-3"}
+          onClick={() => dispatch(todoActions.toggleAll())}
+          title={"Toggle all"}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </label>
+        <form
+          className={"grow"}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const input = e.currentTarget[0] as HTMLInputElement;
+            dispatch(todoActions.addTodo(input.value));
+            input.value = "";
+            setRandomPlaceholder();
+          }}
+        >
+          <input
             className={"new-todo input input-lg w-full"}
             autoFocus={true}
             autoComplete={"off"}
             placeholder={placeholder}
-        />
-      </form>
+          />
+        </form>
+      </div>
     </header>
   );
 };

@@ -6,89 +6,94 @@ import Create from "#/components/todos/Create.tsx";
 import { Tabs, useActiveTab } from "#/hooks/tabs.ts";
 import Link from "#/renderer/Link.tsx";
 import { todoActions } from "#/store/todos.ts";
-import {useAppDispatch, useAppSelector} from "#/store/hooks.ts";
+import { useAppDispatch, useAppSelector } from "#/store/hooks.ts";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-    return (
-        <Provider store={store}>
-            <PersistGate>
-                    <Create />
-                    {children}
-                    <TodoFooter />
-            </PersistGate>
-        </Provider>
-    );
+  return (
+    <Provider store={store}>
+      <PersistGate>
+        <Create />
+        {children}
+        <TodoFooter />
+      </PersistGate>
+    </Provider>
+  );
 };
 
 const TodoFooter: FC = () => {
-    const todoCount = useAppSelector(state =>
-        state.todos.length
-    );
-    return(
-        <>
-        {todoCount === 0 ? null :
-            <footer className={"bg-base-200 p-3 grid grid-cols-3 place-items-center"}>
-                <TodoCount />
-                <SelectTab />
-                <ClearCompleted />
-            </footer>}
-        </>
-    )
-}
+  const todoCount = useAppSelector((state) => state.todos.length);
+
+  if (todoCount === 0) {
+    return null;
+  }
+
+  return (
+    <footer
+      className={
+        "bg-base-200 rounded flex flex-wrap items-center justify-between p-1"
+      }
+    >
+      <TodoCount />
+      <SelectTab />
+      <ClearCompleted />
+    </footer>
+  );
+};
 
 const TodoCount: FC = () => {
-    const incompleteCount = useAppSelector(state =>
-        state.todos.filter((todo) => !todo.isCompleted)
-    ).length;
+  const incompleteCount = useAppSelector((state) =>
+    state.todos.filter((todo) => !todo.isCompleted)
+  ).length;
 
-    return (
-        <>
-            <span className={`todo-count tab tab-lg justify-self-start`}>
-                <strong>{incompleteCount}</strong>&nbsp;{incompleteCount === 1 ? "item" : "items"} left
-            </span>
-        </>
-    )
-}
-
-
+  return (
+    <span
+      className={`todo-count mx-3 justify-self-start order-1 sm:order-none`}
+    >
+      <strong>{incompleteCount}</strong>&nbsp;
+      {incompleteCount === 1 ? "item" : "items"} left
+      {!incompleteCount && " 🎉"}
+    </span>
+  );
+};
 
 const SelectTab: FC = () => {
   const activeTab = useActiveTab();
   return (
-      <ul className="filters flex justify-center items-center">
-        {Tabs.map((tab) => (
+    <ul className="filters tabs mx-auto">
+      {Tabs.map((tab, key) => (
+        <li key={key}>
           <Link
             key={tab.href}
             href={tab.href}
-            className={`tab tab-lg tab-bordered ${
+            className={`tab tab-lg  ${
               tab === activeTab ? "tab-active selected" : ""
             }`}
           >
             {tab.name}
           </Link>
-        ))}
-      </ul>
+        </li>
+      ))}
+    </ul>
   );
 };
 
 const ClearCompleted: FC = () => {
-    const dispatch = useAppDispatch();
-    const hasCompleted = useAppSelector(state =>
-        state.todos.find((todo) => todo.isCompleted) !== undefined
-    );
-    return (
-        <>
-            {hasCompleted ? (
-                <button
-                    className={`clear-completed tab tab-lg tab-bordered justify-self-end`}
-                    onClick={() => dispatch(todoActions.removeTodoCompleted())}
-                >
-                    Clear completed
-                </button>
-            ) : null}
-        </>
-    )
-
-}
+  const dispatch = useAppDispatch();
+  const hasCompleted = useAppSelector(
+    (state) => state.todos.findIndex((todo) => todo.isCompleted) !== -1
+  );
+  return (
+    <button
+      className={
+        `clear-completed btn capitalize order-2 sm:order-none` +
+        " " +
+        (hasCompleted ? "visible" : "invisible")
+      }
+      onClick={() => dispatch(todoActions.clearCompleted())}
+    >
+      Clear completed
+    </button>
+  );
+};
 
 export default Layout;

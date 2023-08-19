@@ -7,18 +7,16 @@ const Link: FC<{
   children: ReactNode;
 }> = ({ href, className, children }) => {
   return (
-      <li style={{listStyle: "none"}}>
-        <a
-          href={href}
-          className={className}
-          onClick={(e) => {
-            e.preventDefault();
-            navigate(href);
-          }}
-        >
-          {children}
-        </a>
-      </li>
+    <a
+      href={href}
+      className={className}
+      onClick={(e) => {
+        e.preventDefault();
+        navigate(href);
+      }}
+    >
+      {children}
+    </a>
   );
 };
 
